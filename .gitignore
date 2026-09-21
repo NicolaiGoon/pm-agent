@@ -24,6 +24,13 @@ supabase/.branches/
 # test / coverage
 coverage/
 
+# Claude Code — .claude/settings.json is shared project config and IS committed.
+# These are per-developer and are not: settings.local.json holds machine paths
+# and individual permission grants. Do not rely on a global gitignore for this;
+# a collaborator cloning the repo will not have one.
+.claude/settings.local.json
+.claude/worktrees/
+
 # editor + OS
 .DS_Store
 Thumbs.db

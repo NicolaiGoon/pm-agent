@@ -3,7 +3,7 @@
 A single-user, Jira-like board where you write tasks, a refinement agent turns
 them into specs, you approve, and an implementation agent opens a pull request.
 
-Design docs: [HLD.md](HLD.md) · [LLD.md](LLD.md) · task breakdown in [TASKS.md](TASKS.md).
+Design docs: [HLD](docs/HLD.md) · [LLD](docs/LLD.md) · task breakdown in [TASKS](docs/TASKS.md).
 
 ## Requirements
 
