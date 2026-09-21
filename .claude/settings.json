@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "statusMessage": "Checking docs/ is up to date",
+            "timeout": 15,
+            "command": "base=$(git merge-base origin/main HEAD 2>/dev/null) || exit 0; [ -n \"$base\" ] || exit 0; changed=$(git diff --name-only \"$base\"...HEAD 2>/dev/null); [ -n \"$changed\" ] || exit 0; printf '%s\\n' \"$changed\" | grep -q '^docs/TASKS\\.md$' && exit 0; printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"PROJECT RULE: every PR reviews docs/ and updates docs/TASKS.md. This branch changes files but does not touch docs/TASKS.md. Before pushing: tick the checkboxes for completed work, update the Status column and the legend date, refresh the status note under each task touched, and check whether docs/HLD.md or docs/LLD.md now contradict the code. If no docs change is genuinely needed, say so explicitly in the PR description rather than skipping it silently.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
