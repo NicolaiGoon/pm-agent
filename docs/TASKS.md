@@ -14,46 +14,49 @@ Every task has an ID, dependencies, the steps to do, and "Done when" acceptance 
 
 ## Summary
 
-| ID | Task | Milestone | Size | Depends on |
-| --- | --- | --- | --- | --- |
-| T-001 | Prerequisites and accounts | M0 Setup | S | — |
-| T-002 | Monorepo scaffold | M0 Setup | S | T-001 |
-| T-003 | Scratch target repo | M0 Setup | S | T-001 |
-| T-004 | Local Supabase stack | M0 Setup | S | T-002 |
-| T-101 | Schema migration: enums, tables, indexes | M1 Board | M | T-004 |
-| T-102 | Triggers and RLS policies | M1 Board | M | T-101 |
-| T-103 | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
-| T-104 | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
-| T-105 | `domain` package | M1 Board | S | T-002 |
-| T-106 | `db` package | M1 Board | S | T-101, T-105 |
-| T-107 | Auth: GitHub login | M1 Board | S | T-004, T-106 |
-| T-108 | Task API route handlers | M1 Board | M | T-103, T-107 |
-| T-109 | Board UI | M1 Board | L | T-108 |
-| T-110 | Task detail page | M1 Board | M | T-108 |
-| T-111 | Realtime updates | M1 Board | S | T-109, T-110 |
-| T-112 | Settings and projects page | M1 Board | M | T-108 |
-| T-201 | Queues, `enqueue_for_state`, queue RPC wrappers | M2 Refinement | M | T-103 |
-| T-202 | `QueueWorker` and orchestrator bootstrap | M2 Refinement | M | T-201, T-106 |
-| T-203 | GitHub App and `github` package | M2 Refinement | M | T-003, T-105 |
-| T-204 | Project setup verifies App access | M2 Refinement | S | T-112, T-203 |
-| T-205 | Agent run framework and run logging | M2 Refinement | M | T-202 |
-| T-206 | Refinement agent | M2 Refinement | L | T-205, T-203 |
-| T-207 | `handleRefine` job handler | M2 Refinement | M | T-206 |
-| T-208 | Spec review UI | M2 Refinement | L | T-110, T-207 |
-| T-209 | Run log viewer and cost display | M2 Refinement | S | T-205, T-111 |
-| T-301 | Sandbox image and entrypoint | M3 Implementation | M | T-002 |
-| T-302 | `sandbox` package | M3 Implementation | M | T-301 |
-| T-303 | Implementation agent | M3 Implementation | L | T-205, T-301 |
-| T-304 | `handleImplement` job handler | M3 Implementation | L | T-302, T-303, T-203 |
-| T-305 | Webhook Edge Function | M3 Implementation | M | T-103, T-203 |
-| T-306 | Budget guard | M3 Implementation | S | T-304 |
-| T-307 | Sweeper, cancel, graceful shutdown | M3 Implementation | M | T-304 |
-| T-401 | Review loop (`address_review`) | M4 Review & hardening | M | T-304, T-305 |
-| T-402 | CI status badge | M4 Review & hardening | S | T-305 |
-| T-403 | Sandbox egress proxy | M4 Review & hardening | M | T-302 |
-| T-404 | Health endpoint and spend view | M4 Review & hardening | S | T-202, T-209 |
-| T-501 | Agent eval set and harness | M5 Evaluate | M | T-304 |
-| T-502 | Tune prompts and models, record decisions | M5 Evaluate | S | T-501 |
+Status: ✅ done · 🟡 partial, blocked on something named in the task · ⬜ not started.
+Last updated 2026-09-21.
+
+| ID | Status | Task | Milestone | Size | Depends on |
+| --- | --- | --- | --- | --- | --- |
+| T-001 | 🟡 | Prerequisites and accounts | M0 Setup | S | — |
+| T-002 | ✅ | Monorepo scaffold | M0 Setup | S | T-001 |
+| T-003 | ⬜ | Scratch target repo | M0 Setup | S | T-001 |
+| T-004 | 🟡 | Local Supabase stack | M0 Setup | S | T-002 |
+| T-101 | ✅ | Schema migration: enums, tables, indexes | M1 Board | M | T-004 |
+| T-102 | ✅ | Triggers and RLS policies | M1 Board | M | T-101 |
+| T-103 | ⬜ | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
+| T-104 | ⬜ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
+| T-105 | 🟡 | `domain` package | M1 Board | S | T-002 |
+| T-106 | ⬜ | `db` package | M1 Board | S | T-101, T-105 |
+| T-107 | ⬜ | Auth: GitHub login | M1 Board | S | T-004, T-106 |
+| T-108 | ⬜ | Task API route handlers | M1 Board | M | T-103, T-107 |
+| T-109 | ⬜ | Board UI | M1 Board | L | T-108 |
+| T-110 | ⬜ | Task detail page | M1 Board | M | T-108 |
+| T-111 | ⬜ | Realtime updates | M1 Board | S | T-109, T-110 |
+| T-112 | ⬜ | Settings and projects page | M1 Board | M | T-108 |
+| T-201 | ⬜ | Queues, `enqueue_for_state`, queue RPC wrappers | M2 Refinement | M | T-103 |
+| T-202 | ⬜ | `QueueWorker` and orchestrator bootstrap | M2 Refinement | M | T-201, T-106 |
+| T-203 | 🟡 | GitHub App and `github` package | M2 Refinement | M | T-003, T-105 |
+| T-204 | ⬜ | Project setup verifies App access | M2 Refinement | S | T-112, T-203 |
+| T-205 | ⬜ | Agent run framework and run logging | M2 Refinement | M | T-202 |
+| T-206 | ⬜ | Refinement agent | M2 Refinement | L | T-205, T-203 |
+| T-207 | ⬜ | `handleRefine` job handler | M2 Refinement | M | T-206 |
+| T-208 | ⬜ | Spec review UI | M2 Refinement | L | T-110, T-207 |
+| T-209 | ⬜ | Run log viewer and cost display | M2 Refinement | S | T-205, T-111 |
+| T-301 | ⬜ | Sandbox image and entrypoint | M3 Implementation | M | T-002 |
+| T-302 | ⬜ | `sandbox` package | M3 Implementation | M | T-301 |
+| T-303 | ⬜ | Implementation agent | M3 Implementation | L | T-205, T-301 |
+| T-304 | ⬜ | `handleImplement` job handler | M3 Implementation | L | T-302, T-303, T-203 |
+| T-305 | ⬜ | Webhook Edge Function | M3 Implementation | M | T-103, T-203 |
+| T-306 | ⬜ | Budget guard | M3 Implementation | S | T-304 |
+| T-307 | ⬜ | Sweeper, cancel, graceful shutdown | M3 Implementation | M | T-304 |
+| T-401 | ⬜ | Review loop (`address_review`) | M4 Review & hardening | M | T-304, T-305 |
+| T-402 | ⬜ | CI status badge | M4 Review & hardening | S | T-305 |
+| T-403 | ⬜ | Sandbox egress proxy | M4 Review & hardening | M | T-302 |
+| T-404 | ⬜ | Health endpoint and spend view | M4 Review & hardening | S | T-202, T-209 |
+| T-501 | ⬜ | Agent eval set and harness | M5 Evaluate | M | T-304 |
+| T-502 | ⬜ | Tune prompts and models, record decisions | M5 Evaluate | S | T-501 |
 
 ```mermaid
 flowchart LR
@@ -68,10 +71,21 @@ You can build T-301, T-302 and T-305 alongside M2 once T-103 and T-203 are done,
 
 ## Decisions to confirm before coding
 
-- [ ] Package manager and monorepo tool (pnpm + turbo assumed).
-- [ ] Refinement and implementation models, and the daily budget default ($10 assumed).
-- [ ] Whether the refinement agent may use web search in v1.
-- [ ] Whether the implementation agent may add new dependencies not listed in the approved spec (recommended: no).
+- [x] Package manager and monorepo tool — pnpm 12 + turbo, decided in T-002.
+- [x] Node and TypeScript — Node 24 LTS; TypeScript 6.0.3, not 7, because
+      typescript-eslint refuses TS 7 until it ships 7.1 support.
+- [ ] Refinement and implementation models, and the daily budget default.
+      **Provisional**: `claude-sonnet-5` to refine, `claude-opus-5` to implement,
+      $10/day, seeded by the T-102 trigger following the HLD's cheaper-to-refine
+      rule. Editable from settings; T-502 tunes both from eval data. Confirm or
+      change before M2 spends real money.
+- [ ] Whether the refinement agent may use web search in v1. Due before T-206,
+      which fixes the agent's tool allow-list.
+- [ ] Whether the implementation agent may add new dependencies not listed in the
+      approved spec (recommended: no). Due before T-206, not T-303: if the answer
+      is no, the refinement prompt has to tell the agent that unlisted
+      dependencies will be **blocked**, not merely discouraged. `domain`'s
+      `allowedNewDependencies()` already reads the flag the hook will enforce.
 
 ---
 
@@ -81,10 +95,15 @@ You can build T-301, T-302 and T-305 alongside M2 once T-103 and T-203 are done,
 
 Install the local toolchain and create the external accounts the system depends on.
 
-- [ ] Install Node 22, pnpm 10, Docker Desktop (or Docker Engine) and the Supabase CLI.
+- [x] Install Node 22, pnpm 10, Docker Desktop (or Docker Engine) and the Supabase CLI.
 - [ ] Create a hosted Supabase project and note its URL, anon key and service role key.
 - [ ] Create an Anthropic API key with a monthly spend limit set in the console.
 - [ ] Enable the GitHub OAuth provider in Supabase Auth, using a GitHub OAuth app whose callback is the Supabase auth URL.
+
+> 🟡 Toolchain done: Node 24.21.0 (nvm), pnpm 12.5.1, Docker 29.5.2, Supabase CLI 2.117.0
+> pinned as a repo devDependency rather than installed globally. Outstanding: hosted
+> Supabase project, Anthropic API key, and the GitHub OAuth provider in Supabase Auth.
+> Note this OAuth app is not the GitHub App from T-203 — they are separate.
 
 **Done when**: `node -v`, `pnpm -v`, `docker run hello-world` and `supabase --version` all work, and the keys are stored in your password manager.
 
@@ -92,11 +111,15 @@ Install the local toolchain and create the external accounts the system depends 
 
 Create the `pm-agent` repository with the layout from LLD §2.
 
-- [ ] Set up the pnpm workspace (`apps/*`, `packages/*`), `turbo.json` and `tsconfig.base.json` (strict).
-- [ ] Create `apps/web` with Next.js 16 (App Router), Tailwind v4 and shadcn/ui.
-- [ ] Add empty packages `domain`, `db`, `orchestrator`, `agents`, `github` and `sandbox`, each with `typecheck` and `test` scripts.
-- [ ] Add `.gitignore`, `.env.example` (LLD §11) and a README with setup steps.
-- [ ] Add CI: a GitHub Actions workflow running `pnpm typecheck` and `pnpm test` on push.
+- [x] Set up the pnpm workspace (`apps/*`, `packages/*`), `turbo.json` and `tsconfig.base.json` (strict).
+- [x] Create `apps/web` with Next.js 16 (App Router), Tailwind v4 and shadcn/ui.
+- [x] Add empty packages `domain`, `db`, `orchestrator`, `agents`, `github` and `sandbox`, each with `typecheck` and `test` scripts.
+- [x] Add `.gitignore`, `.env.example` (LLD §11) and a README with setup steps.
+- [x] Add CI: a GitHub Actions workflow running `pnpm typecheck` and `pnpm test` on push.
+
+> ✅ Done. Deviations, each explained in its commit: Next 16 rather than 15,
+> TypeScript 6.0.3 rather than 7 (typescript-eslint refuses TS 7), and the Supabase CLI
+> as a devDependency. CI also runs lint and build, not just typecheck and test.
 
 **Done when**: `pnpm install && pnpm typecheck && pnpm test` passes locally and in CI, and `pnpm dev` serves the default page on `localhost:3000`.
 
@@ -113,10 +136,14 @@ Create a small throwaway repository that agents can safely work on.
 
 Run Supabase locally for development and testing.
 
-- [ ] Run `supabase init` in the monorepo, then `supabase start`.
-- [ ] Add scripts to the root `package.json`: `db:start`, `db:reset`, `db:test` and `db:types`.
+- [x] Run `supabase init` in the monorepo, then `supabase start`.
+- [x] Add scripts to the root `package.json`: `db:start`, `db:reset`, `db:test` and `db:types`.
 - [ ] Link the hosted project with `supabase link`.
-- [ ] Add a `db:push` script (`supabase db push`) and document the rule in the README: a migration goes to the hosted project only after `db:reset` and `db:test` pass locally. Never edit the hosted schema in Studio.
+- [x] Add a `db:push` script (`supabase db push`) and document the rule in the README: a migration goes to the hosted project only after `db:reset` and `db:test` pass locally. Never edit the hosted schema in Studio.
+
+> 🟡 Local stack running on 10 containers; analytics disabled because Vector could not
+> reach the Docker socket on Windows and crash-looped. `supabase link` and `db:push`
+> outstanding, both blocked on the hosted project from T-001.
 
 **Done when**:
 
@@ -139,11 +166,15 @@ Run Supabase locally for development and testing.
 
 Write `supabase/migrations/0001_init.sql` following LLD §3.
 
-- [ ] Enable the `pgmq` extension (used in M2, enabled now so the migration is stable).
-- [ ] Create enums `task_state`, `run_kind`, `run_status` and `actor_kind`.
-- [ ] Create tables `projects`, `tasks`, `task_specs`, `comments`, `agent_runs`, `run_logs`, `task_events`, `github_events`, `settings` and `task_transitions`, with foreign keys and indexes as specified.
-- [ ] Create the private Storage bucket `runs`.
-- [ ] Add `tasks`, `task_specs`, `comments`, `agent_runs` and `run_logs` to the `supabase_realtime` publication.
+- [x] Enable the `pgmq` extension (used in M2, enabled now so the migration is stable).
+- [x] Create enums `task_state`, `run_kind`, `run_status` and `actor_kind`.
+- [x] Create tables `projects`, `tasks`, `task_specs`, `comments`, `agent_runs`, `run_logs`, `task_events`, `github_events`, `settings` and `task_transitions`, with foreign keys and indexes as specified.
+- [x] Create the private Storage bucket `runs`.
+- [x] Add `tasks`, `task_specs`, `comments`, `agent_runs` and `run_logs` to the `supabase_realtime` publication.
+
+> ✅ Done. 10 tables, 4 enums, 14 foreign keys, private `runs` bucket, 5 tables in the
+> Realtime publication. Filename is `20260921120000_init.sql`, not `0001_init.sql`:
+> the CLI requires a `<timestamp>_name.sql` pattern and silently skips anything else.
 
 **Done when**: `supabase db reset` applies the migration cleanly, and the tables appear in Studio.
 
@@ -151,19 +182,23 @@ Write `supabase/migrations/0001_init.sql` following LLD §3.
 
 Protect the data with row-level security (RLS) and trigger guards.
 
-- [ ] Add a `tasks_updated_at` trigger.
-- [ ] Add a `tasks_guard_state` trigger that blocks changes to `state`, `approved_spec_id`, `locked_by`, `locked_at` and `pr_number` unless `app.transition = 'on'`.
-- [ ] Add a trigger that rejects new `task_specs` rows once the task is in `ready_to_pull` or later.
-- [ ] Add an `on_auth_user_created` trigger that inserts a `settings` row with default models and budget.
-- [ ] Enable RLS on every table:
+- [x] Add a `tasks_updated_at` trigger.
+- [x] Add a `tasks_guard_state` trigger that blocks changes to `state`, `approved_spec_id`, `locked_by`, `locked_at` and `pr_number` unless `app.transition = 'on'`.
+- [x] Add a trigger that rejects new `task_specs` rows once the task is in `ready_to_pull` or later.
+- [x] Add an `on_auth_user_created` trigger that inserts a `settings` row with default models and budget.
+- [x] Enable RLS on every table:
     - `projects`, `tasks` and `settings` use owner policies.
     - Child tables (`task_specs`, `comments`, `agent_runs`, `run_logs`, `task_events`) allow select through the owning task.
     - `comments` allows the user to insert with `author = 'user'`.
     - `github_events` and `task_transitions` have no user write policy.
-- [ ] Make the `tasks` insert policy require `state = 'draft'`.
-- [ ] Add Storage policies on `storage.objects` for the private `runs` bucket. Object names are `<run_id>/<file>`.
+- [x] Make the `tasks` insert policy require `state = 'draft'`.
+- [x] Add Storage policies on `storage.objects` for the private `runs` bucket. Object names are `<run_id>/<file>`.
     - `select` for `authenticated`: allowed when `bucket_id = 'runs'` and the first path segment is the id of an `agent_runs` row on one of the user's own tasks.
     - No `insert`, `update` or `delete` policies. Only the service role (the orchestrator) writes run artifacts.
+
+> ✅ Done. Verified by hand: direct state change and lock grab rejected while a title
+> edit succeeds; spec insert rejected once `ready_to_pull`; user B sees none of user A's
+> rows or transcripts. T-104 turns these checks into pgTAP so they run in CI.
 
 **Done when**:
 
@@ -204,11 +239,14 @@ Write database tests in `supabase/tests/`.
 
 Create the shared, dependency-free domain types.
 
-- [ ] Add `states.ts`: `TaskState`, `ActorKind` and a `TRANSITIONS` array mirroring the 14 seed rows, with helpers `canTransition(from, to, actor)` and `userActions(state)`. Both helpers apply the cancel rule in code, the same way `transition_task` does.
-- [ ] Add `jobs.ts`: the `JobMessage` Zod union (LLD §5).
-- [ ] Add `spec.ts`: the `RefinementOutput` Zod schema (LLD §7.1) and the `ImplementationResult` schema for `result.json`.
-- [ ] Add `env.ts`: a Zod schema for the environment variables (LLD §11), with separate server and browser subsets.
+- [x] Add `states.ts`: `TaskState`, `ActorKind` and a `TRANSITIONS` array mirroring the 14 seed rows, with helpers `canTransition(from, to, actor)` and `userActions(state)`. Both helpers apply the cancel rule in code, the same way `transition_task` does.
+- [x] Add `jobs.ts`: the `JobMessage` Zod union (LLD §5).
+- [x] Add `spec.ts`: the `RefinementOutput` Zod schema (LLD §7.1) and the `ImplementationResult` schema for `result.json`.
+- [x] Add `env.ts`: a Zod schema for the environment variables (LLD §11), with separate server and browser subsets.
 - [ ] Add a Vitest parity test that extracts the `task_transitions` seed from the migration file and compares it to `TRANSITIONS`.
+
+> 🟡 All four modules done with 38 tests. The SQL/TS parity test is outstanding: it reads
+> the `task_transitions` seed, which arrives with T-103.
 
 **Done when**: `pnpm --filter @pm/domain test` passes, and changing either copy of the transitions makes the parity test fail.
 
@@ -337,12 +375,16 @@ Build the worker loop that consumes the queues.
 
 Set up GitHub access for the agents.
 
-- [ ] Create a private GitHub App with the permissions and events from LLD §9. Leave the webhook URL empty until T-305.
+- [x] Create a private GitHub App with the permissions and events from LLD §9. Leave the webhook URL empty until T-305.
 - [ ] Install the App on `pm-agent-playground`.
 - [ ] Implement `installationToken(installationId, repo, access)`.
 - [ ] Add an Octokit client factory.
 - [ ] Add a `shallowClone(repo, token, dir)` helper that clones with the token and never writes it to disk or logs.
 - [ ] Add PR helpers: `openPullRequest` and `getReviewComments`.
+
+> 🟡 Private GitHub App created and its credentials verified (App ID numeric, private key
+> decodes to a valid 2048-bit RSA key). Everything else outstanding, and installing the
+> App needs the playground repo from T-003, which does not exist yet.
 
 **Done when**: a script mints a token and clones the playground repo, and a test confirms the token string never appears in logs.
 
