@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No version pinned here on purpose: the action reads `packageManager`
+      # from package.json, so CI uses exactly the pnpm the repo declares.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Must satisfy engines.node in package.json. Node 22 silently skips
+          # native optional dependencies (rolldown), so do not lower this.
+          node-version: 24
+          cache: pnpm
+
+      # --frozen-lockfile fails rather than resolving anything new, so CI
+      # installs byte-identical dependencies. Under pnpm 12 this also runs the
+      # supply-chain policy check (minimumReleaseAge).
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+
+      - run: pnpm lint
+
+      - run: pnpm test
+
+      # next build re-checks types for apps/web, but it is the only step that
+      # catches build-time failures such as a client/server boundary violation.
+      - run: pnpm build
+
+  # T-104 adds a second job here that starts a local Supabase stack and runs
+  # `supabase test db` (pgTAP) against it.

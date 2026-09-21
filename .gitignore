@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# turbo
+.turbo/
+
+# env — never commit secrets (LLD §11)
+.env
+.env.local
+.env.*.local
+*.pem
+
+# supabase local stack
+supabase/.temp/
+supabase/.branches/
+
+# test / coverage
+coverage/
+
+# editor + OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
