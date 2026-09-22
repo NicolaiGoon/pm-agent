@@ -41,5 +41,32 @@ jobs:
       # catches build-time failures such as a client/server boundary violation.
       - run: pnpm build
 
-  # T-104 adds a second job here that starts a local Supabase stack and runs
-  # `supabase test db` (pgTAP) against it.
+  # The state machine, its guard triggers and RLS are the parts the HLD says
+  # must never be wrong. They live in SQL, so no amount of TypeScript testing
+  # covers them — this job is what protects them.
+  database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Starting the stack applies every migration to a fresh database, so the
+      # suite always runs against a clean schema with no leftover rows. pgTAP
+      # tests roll back, but they still collide with pre-existing fixtures.
+      - name: Start Supabase
+        run: pnpm supabase start
+
+      - name: Run pgTAP suite
+        run: pnpm db:test
+
+      - name: Stop Supabase
+        if: always()
+        run: pnpm supabase stop --no-backup

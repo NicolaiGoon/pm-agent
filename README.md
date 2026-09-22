@@ -40,7 +40,8 @@ pnpm dev                     # http://localhost:3000
 | `pnpm db:start` / `pnpm db:stop` | Start / stop the local Supabase stack |
 | `pnpm db:status` | Print local URLs and keys |
 | `pnpm db:reset` | Drop and re-apply every migration, then seed |
-| `pnpm db:test` | Run the pgTAP suite in `supabase/tests/` |
+| `pnpm db:test` | Run the pgTAP suite in `supabase/tests/` (assumes a clean database) |
+| `pnpm db:verify` | Reset, then run the pgTAP suite — use this one |
 | `pnpm db:types` | Regenerate `packages/db/src/database.types.ts` |
 | `pnpm db:push` | Apply migrations to the linked hosted project |
 | `pnpm db:diff` | Diff local schema against the migrations |

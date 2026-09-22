@@ -18,6 +18,7 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
+    "db:verify": "supabase db reset && supabase test db",
     "db:types": "supabase gen types typescript --local > packages/db/src/database.types.ts",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff"

@@ -15,7 +15,7 @@ Every task has an ID, dependencies, the steps to do, and "Done when" acceptance 
 ## Summary
 
 Status: ✅ done · 🟡 partial, blocked on something named in the task · ⬜ not started.
-Last updated 2026-09-21.
+Last updated 2026-09-22.
 
 | ID | Status | Task | Milestone | Size | Depends on |
 | --- | --- | --- | --- | --- | --- |
@@ -26,7 +26,7 @@ Last updated 2026-09-21.
 | T-101 | ✅ | Schema migration: enums, tables, indexes | M1 Board | M | T-004 |
 | T-102 | ✅ | Triggers and RLS policies | M1 Board | M | T-101 |
 | T-103 | ✅ | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
-| T-104 | ⬜ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
+| T-104 | ✅ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
 | T-105 | ✅ | `domain` package | M1 Board | S | T-002 |
 | T-106 | ⬜ | `db` package | M1 Board | S | T-101, T-105 |
 | T-107 | ⬜ | Auth: GitHub login | M1 Board | S | T-004, T-106 |
@@ -232,13 +232,31 @@ Implement the core state-machine functions from LLD §4.
 
 Write database tests in `supabase/tests/`.
 
-- [ ] Test every legal transition for its allowed actor(s), and a sample of illegal ones (wrong actor, wrong state).
-- [ ] Test the cancel rule: a user can cancel from every state except `done` and `cancelled`, and a non-user actor can't cancel.
-- [ ] Test that the approval guard rejects a stale `expected_spec_id` with `P0002`.
-- [ ] Test that the guard trigger blocks direct state updates.
-- [ ] Test RLS: user A cannot read or modify user B's projects or tasks, and cannot read objects under B's run ids in the `runs` bucket.
-- [ ] Test that `create_task` produces sequential keys under two concurrent calls.
-- [ ] Test that `task_events` gets exactly one row per transition.
+- [x] Test every legal transition for its allowed actor(s), and a sample of illegal ones (wrong actor, wrong state).
+- [x] Test the cancel rule: a user can cancel from every state except `done` and `cancelled`, and a non-user actor can't cancel.
+- [x] Test that the approval guard rejects a stale `expected_spec_id` with `P0002`.
+- [x] Test that the guard trigger blocks direct state updates.
+- [x] Test RLS: user A cannot read or modify user B's projects or tasks, and cannot read objects under B's run ids in the `runs` bucket.
+- [x] Test that `create_task` produces sequential keys under two concurrent calls.
+- [x] Test that `task_events` gets exactly one row per transition.
+
+> ✅ Done. 80 assertions across four files: 01_schema (structure, enum order,
+> indexes, constraints), 02_state_machine (all 14 seeded transitions driven from
+> the table itself, illegal moves, actor escalation, cancel rule, approval guard,
+> guard trigger, locks, audit trail), 03_rls (two-user isolation including the
+> runs bucket) and 04_create_task (key allocation and ownership).
+>
+> The suite was verified to FAIL, not merely to pass: dropping tasks_guard_state
+> reds three tests, and widening the tasks select policy to `using (true)` reds two.
+>
+> Concurrent key allocation cannot be tested from pgTAP, which runs inside one
+> transaction. Verified separately with four parallel sessions creating 25 tasks
+> each: 100 tasks, 100 distinct keys, no gaps. The `for update` row lock in
+> create_task is what makes that hold.
+>
+> CI gained a second job that starts Supabase and runs the suite. Note pgTAP
+> tests roll back but still collide with pre-existing rows, so use `pnpm db:verify`
+> (reset then test) rather than `pnpm db:test` alone.
 
 **Done when**: `supabase test db` is green, and CI runs it (the workflow starts a local Supabase in CI).
 
