@@ -67,6 +67,13 @@ jobs:
       - name: Run pgTAP suite
         run: pnpm db:test
 
+      # @pm/db's integration tests skip themselves when the stack is
+      # unreachable, so the `check` job passes without Docker. This is the job
+      # that actually exercises them, and the only place an RPC argument name
+      # drifting from the migration would be caught.
+      - name: Run db package integration tests
+        run: pnpm --filter @pm/db test
+
       - name: Stop Supabase
         if: always()
         run: pnpm supabase stop --no-backup

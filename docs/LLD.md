@@ -230,6 +230,14 @@ create table task_transitions (
 );
 ```
 
+**Key uniqueness**: `tasks.key` is unique globally, which is what makes `/tasks/PM-42`
+unambiguous and lets `getTaskByKey` take a key alone. `projects.key_prefix` is only
+unique per owner, so two owners sharing a prefix would both allocate `PM-1` and the
+second would fail on the global constraint. v1 is single-user and one owner cannot
+reuse a prefix, so this cannot arise; making the system multi-user means making
+`key_prefix` globally unique, or scoping `tasks.key` to its project and changing the
+task URL accordingly.
+
 **RLS**: enable on every table. User-facing tables get `owner_id = auth.uid()` policies (child tables check via a join to `tasks`). `tasks` insert policy also requires `state = 'draft'`. `github_events` and `task_transitions` writes have no user policy; only the service role (Edge Function, orchestrator) touches them. The orchestrator uses the service role key, since it runs server-side only.
 
 **Triggers**

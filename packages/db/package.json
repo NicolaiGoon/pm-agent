@@ -17,5 +17,9 @@
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@pm/domain": "workspace:*",
+    "@supabase/supabase-js": "^2.116.0"
   }
 }
