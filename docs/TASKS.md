@@ -21,7 +21,7 @@ Last updated 2026-09-22.
 | --- | --- | --- | --- | --- | --- |
 | T-001 | 🟡 | Prerequisites and accounts | M0 Setup | S | — |
 | T-002 | ✅ | Monorepo scaffold | M0 Setup | S | T-001 |
-| T-003 | ⬜ | Scratch target repo | M0 Setup | S | T-001 |
+| T-003 | ✅ | Scratch target repo | M0 Setup | S | T-001 |
 | T-004 | 🟡 | Local Supabase stack | M0 Setup | S | T-002 |
 | T-101 | ✅ | Schema migration: enums, tables, indexes | M1 Board | M | T-004 |
 | T-102 | ✅ | Triggers and RLS policies | M1 Board | M | T-101 |
@@ -127,8 +127,28 @@ Create the `pm-agent` repository with the layout from LLD §2.
 
 Create a small throwaway repository that agents can safely work on.
 
-- [ ] Create `pm-agent-playground`: a tiny TypeScript project with `pnpm test` (Vitest) and `pnpm lint`, plus one or two existing tests.
-- [ ] Protect `main`: require a PR and one approving review, and block force pushes.
+- [x] Create `pm-agent-playground`: a tiny TypeScript project with `pnpm test` (Vitest) and `pnpm lint`, plus one or two existing tests.
+- [x] Protect `main`: require a PR and one approving review, and block force pushes.
+
+> ✅ Done. [NicolaiGoon/pm-agent-playground](https://github.com/NicolaiGoon/pm-agent-playground)
+> is public, because GitHub Free only offers branch protection on public repos. It holds
+> `textkit`, a text-utilities library with a CLI (case, truncate, wrap, stats, plus an
+> argv parser), bigger than "tiny" on purpose: a one-file repo gives the refinement agent
+> nothing to explore and T-501 nothing to evaluate. Tests cover case, truncate and the
+> CLI; wrap and stats are left untested so there is room for "add tests" eval tasks.
+> Hidden eval checks belong in this repo, not the playground, or the agent will read them.
+>
+> It targets Node 22 to match the sandbox image in LLD §8. Install, typecheck, lint and
+> test were verified inside `node:22-bookworm` with corepack, and CI runs on Node 22.
+>
+> Protection is a repository ruleset, not classic branch protection. Ruleset
+> `protect main` requires a PR, one approval and a passing `check` job from GitHub
+> Actions, and blocks deletion and force pushes. The admin role may bypass only when
+> merging a PR (`bypass_mode: pull_request`), so you can merge PRs you opened yourself,
+> which you cannot approve, while direct pushes stay rejected for everyone. Verified:
+> a direct push as admin was declined with GH013, and PR #1 showed `REVIEW_REQUIRED`
+> after CI passed. Force pushes are blocked by the ruleset but were not exercised. The
+> PR-merge bypass was not exercised either: PR #1 is waiting on a manual merge.
 
 **Done when**: the repo exists, CI passes on `main`, and a direct push to `main` is rejected.
 
@@ -441,8 +461,9 @@ Set up GitHub access for the agents.
 - [ ] Add PR helpers: `openPullRequest` and `getReviewComments`.
 
 > 🟡 Private GitHub App created and its credentials verified (App ID numeric, private key
-> decodes to a valid 2048-bit RSA key). Everything else outstanding, and installing the
-> App needs the playground repo from T-003, which does not exist yet.
+> decodes to a valid 2048-bit RSA key). The playground repo from T-003 now exists, so
+> the next step is installing the App on it, which is done by hand in the GitHub UI.
+> The code items are not started.
 
 **Done when**: a script mints a token and clones the playground repo, and a test confirms the token string never appears in logs.
 
@@ -546,6 +567,12 @@ Build the Docker image the implementation agent runs in (LLD §8).
     - Writes JSON events line by line to stdout.
     - Exits with 0 when done, 2 when blocked, and 1 on error.
 - [ ] Add a `pnpm sandbox:build` script that tags the image `pm-agent-sandbox:<version>`.
+
+> ⬜ To check when this starts: corepack downloads the pnpm version a repo pins in
+> `packageManager` on first use (seen while testing the playground in `node:22-bookworm`).
+> Under a read-only root filesystem its default cache in the home directory is not
+> writable, so point `COREPACK_HOME` at a writable path such as `/tmp/corepack`.
+> Untested so far.
 
 **Done when**: `docker run` with a dummy input prints JSON events and exits, as the `agent` user with a read-only root filesystem.
 
