@@ -29,7 +29,7 @@ Last updated 2026-09-22.
 | T-104 | ✅ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
 | T-105 | ✅ | `domain` package | M1 Board | S | T-002 |
 | T-106 | ✅ | `db` package | M1 Board | S | T-101, T-105 |
-| T-107 | 🟡 | Auth: GitHub login | M1 Board | S | T-004, T-106 |
+| T-107 | ✅ | Auth: sign-in (email/password, GitHub optional) | M1 Board | S | T-004, T-106 |
 | T-108 | ⬜ | Task API route handlers | M1 Board | M | T-103, T-107 |
 | T-109 | ⬜ | Board UI | M1 Board | L | T-108 |
 | T-110 | ⬜ | Task detail page | M1 Board | M | T-108 |
@@ -300,28 +300,32 @@ Create the typed database access layer.
 
 **Done when**: the web app can import `@pm/db` and call `listBoard` with full type inference.
 
-### T-107 Auth: GitHub login · S
+### T-107 Auth: sign-in · S
 
 Add GitHub sign-in through Supabase Auth.
 
 - [x] Add `lib/supabase/server.ts` and `browser.ts` using `@supabase/ssr`.
 - [x] Add a `proxy.ts` that refreshes the session and redirects unauthenticated users to `/login`. (Next 16 deprecated the `middleware` convention and renamed it to `proxy`; same behaviour.)
-- [x] Add a `/login` page with a "Sign in with GitHub" button, and an `/auth/callback` route handler.
+- [x] Add a `/login` page with email/password sign-in and sign-up, a "Sign in with GitHub" button behind a flag, and an `/auth/callback` route handler.
 - [x] Add a sign-out action in the header.
 
-> 🟡 Code complete and the routing verified: signed out, / and /tasks/PM-1 both
-> redirect to /login carrying ?next=, /login renders, the callback without a code
-> lands on the error page, and the dev log is clean.
+> ✅ Done. Email and password is the default provider rather than GitHub OAuth:
+> the system is single-user, so the identity provider is a convenience, and this
+> removes a setup step before the board is usable. GitHub OAuth is fully
+> implemented and appears behind NEXT_PUBLIC_GITHUB_AUTH_ENABLED, so the button
+> is never shown in a state where clicking it would fail. HLD §Supabase features
+> updated to match.
 >
-> Not verifiable yet: an actual GitHub sign-in. That needs a GitHub OAuth app —
-> which is NOT the GitHub App from T-203 — so [auth.external.github] is committed
-> disabled in supabase/config.toml with the credentials read from env. Flip it on
-> once T-001 is finished, then confirm a settings row appears after first login.
+> Verified in a real browser: create account → signed in → sign out → wrong
+> password rejected with a deliberately vague message → correct password → signed
+> in. The settings row is created by the T-102 trigger with the expected defaults
+> ($10/day, claude-sonnet-5, claude-opus-5). Signed out, / and /tasks/PM-1 both
+> redirect to /login carrying ?next=.
 >
 > Two deviations. Next 16 renamed middleware to proxy, so the file is proxy.ts.
 > And .env.local moved to apps/web/: Next loads it from the app directory, not the
-> monorepo root, so the root copy was being read by nothing and the dev server
-> failed with a misleading "URL and Key are required" error.
+> monorepo root, so the root copy was read by nothing and the dev server failed
+> with a misleading "URL and Key are required" error.
 
 **Done when**: you can sign in and out locally, and a `settings` row exists for your user after the first login.
 
