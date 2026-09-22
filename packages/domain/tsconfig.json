@@ -1,4 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // The parity test reads the migration off disk, so it needs node's types.
+    // This is ambient typing only — the runtime rule from LLD §2 still holds:
+    // src/ ships nothing but zod, and parseEnv takes its source explicitly
+    // rather than reaching for process.env.
+    "types": ["node"]
+  },
   "include": ["src/**/*.ts"]
 }

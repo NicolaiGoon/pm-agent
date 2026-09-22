@@ -15,7 +15,7 @@ Every task has an ID, dependencies, the steps to do, and "Done when" acceptance 
 ## Summary
 
 Status: ✅ done · 🟡 partial, blocked on something named in the task · ⬜ not started.
-Last updated 2026-09-21.
+Last updated 2026-09-22.
 
 | ID | Status | Task | Milestone | Size | Depends on |
 | --- | --- | --- | --- | --- | --- |
@@ -25,9 +25,9 @@ Last updated 2026-09-21.
 | T-004 | 🟡 | Local Supabase stack | M0 Setup | S | T-002 |
 | T-101 | ✅ | Schema migration: enums, tables, indexes | M1 Board | M | T-004 |
 | T-102 | ✅ | Triggers and RLS policies | M1 Board | M | T-101 |
-| T-103 | ⬜ | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
-| T-104 | ⬜ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
-| T-105 | 🟡 | `domain` package | M1 Board | S | T-002 |
+| T-103 | ✅ | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
+| T-104 | ✅ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
+| T-105 | ✅ | `domain` package | M1 Board | S | T-002 |
 | T-106 | ⬜ | `db` package | M1 Board | S | T-101, T-105 |
 | T-107 | ⬜ | Auth: GitHub login | M1 Board | S | T-004, T-106 |
 | T-108 | ⬜ | Task API route handlers | M1 Board | M | T-103, T-107 |
@@ -209,15 +209,22 @@ Protect the data with row-level security (RLS) and trigger guards.
 
 Implement the core state-machine functions from LLD §4.
 
-- [ ] Seed `task_transitions` with the 14 concrete rows from LLD §4. The "any except done → cancelled" line is a wildcard and gets no row: `transition_task` handles it as a special case.
-- [ ] Implement `transition_task`:
+- [x] Seed `task_transitions` with the 14 concrete rows from LLD §4. The "any except done → cancelled" line is a wildcard and gets no row: `transition_task` handles it as a special case.
+- [x] Implement `transition_task`:
     - Row lock, actor checks (a user acts only on their own tasks; any other actor needs the service role).
     - Allowed-transition lookup, plus the `cancelled` rule.
     - Approval guard (`current_spec_id` must exist and match `expected_spec_id`).
     - Patch whitelist, lock handling and the `task_events` insert.
     - Call `enqueue_for_state`. Stub it as a no-op for now; T-201 implements it.
-- [ ] Implement `create_task`: lock the project row, allocate the key, increment `next_task_number` and insert the draft.
-- [ ] Set grants: revoke from `public` and `anon`, grant to `authenticated` and `service_role`.
+- [x] Implement `create_task`: lock the project row, allocate the key, increment `next_task_number` and insert the draft.
+- [x] Set grants: revoke from `public` and `anon`, grant to `authenticated` and `service_role`.
+
+> ✅ Done. Verified end to end against the local stack: create_task allocates PM-1
+> then PM-2, draft → refining succeeds and draft → done raises P0001. A browser user
+> passing actor 'agent' is refused with 42501, a stale expected_spec_id raises P0002,
+> and the full path draft → refining → awaiting_approval → ready_to_pull → in_progress
+> → in_review → done leaves a complete task_events trail. enqueue_for_state is a
+> declared no-op until T-201.
 
 **Done when**: calling the functions over RPC as a user creates `PM-1`, moves it `draft → refining`, and rejects `draft → done` with error code `P0001`.
 
@@ -225,13 +232,31 @@ Implement the core state-machine functions from LLD §4.
 
 Write database tests in `supabase/tests/`.
 
-- [ ] Test every legal transition for its allowed actor(s), and a sample of illegal ones (wrong actor, wrong state).
-- [ ] Test the cancel rule: a user can cancel from every state except `done` and `cancelled`, and a non-user actor can't cancel.
-- [ ] Test that the approval guard rejects a stale `expected_spec_id` with `P0002`.
-- [ ] Test that the guard trigger blocks direct state updates.
-- [ ] Test RLS: user A cannot read or modify user B's projects or tasks, and cannot read objects under B's run ids in the `runs` bucket.
-- [ ] Test that `create_task` produces sequential keys under two concurrent calls.
-- [ ] Test that `task_events` gets exactly one row per transition.
+- [x] Test every legal transition for its allowed actor(s), and a sample of illegal ones (wrong actor, wrong state).
+- [x] Test the cancel rule: a user can cancel from every state except `done` and `cancelled`, and a non-user actor can't cancel.
+- [x] Test that the approval guard rejects a stale `expected_spec_id` with `P0002`.
+- [x] Test that the guard trigger blocks direct state updates.
+- [x] Test RLS: user A cannot read or modify user B's projects or tasks, and cannot read objects under B's run ids in the `runs` bucket.
+- [x] Test that `create_task` produces sequential keys under two concurrent calls.
+- [x] Test that `task_events` gets exactly one row per transition.
+
+> ✅ Done. 80 assertions across four files: 01_schema (structure, enum order,
+> indexes, constraints), 02_state_machine (all 14 seeded transitions driven from
+> the table itself, illegal moves, actor escalation, cancel rule, approval guard,
+> guard trigger, locks, audit trail), 03_rls (two-user isolation including the
+> runs bucket) and 04_create_task (key allocation and ownership).
+>
+> The suite was verified to FAIL, not merely to pass: dropping tasks_guard_state
+> reds three tests, and widening the tasks select policy to `using (true)` reds two.
+>
+> Concurrent key allocation cannot be tested from pgTAP, which runs inside one
+> transaction. Verified separately with four parallel sessions creating 25 tasks
+> each: 100 tasks, 100 distinct keys, no gaps. The `for update` row lock in
+> create_task is what makes that hold.
+>
+> CI gained a second job that starts Supabase and runs the suite. Note pgTAP
+> tests roll back but still collide with pre-existing rows, so use `pnpm db:verify`
+> (reset then test) rather than `pnpm db:test` alone.
 
 **Done when**: `supabase test db` is green, and CI runs it (the workflow starts a local Supabase in CI).
 
@@ -243,10 +268,10 @@ Create the shared, dependency-free domain types.
 - [x] Add `jobs.ts`: the `JobMessage` Zod union (LLD §5).
 - [x] Add `spec.ts`: the `RefinementOutput` Zod schema (LLD §7.1) and the `ImplementationResult` schema for `result.json`.
 - [x] Add `env.ts`: a Zod schema for the environment variables (LLD §11), with separate server and browser subsets.
-- [ ] Add a Vitest parity test that extracts the `task_transitions` seed from the migration file and compares it to `TRANSITIONS`.
+- [x] Add a Vitest parity test that extracts the `task_transitions` seed from the migration file and compares it to `TRANSITIONS`.
 
-> 🟡 All four modules done with 38 tests. The SQL/TS parity test is outstanding: it reads
-> the `task_transitions` seed, which arrives with T-103.
+> ✅ Done. All four modules, 44 tests. The parity test reads the seed out of the
+> migration and was verified to fail when the two copies diverge, not merely to pass.
 
 **Done when**: `pnpm --filter @pm/domain test` passes, and changing either copy of the transitions makes the parity test fail.
 
