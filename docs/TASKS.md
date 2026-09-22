@@ -29,7 +29,7 @@ Last updated 2026-09-22.
 | T-104 | ✅ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
 | T-105 | ✅ | `domain` package | M1 Board | S | T-002 |
 | T-106 | ✅ | `db` package | M1 Board | S | T-101, T-105 |
-| T-107 | ⬜ | Auth: GitHub login | M1 Board | S | T-004, T-106 |
+| T-107 | 🟡 | Auth: GitHub login | M1 Board | S | T-004, T-106 |
 | T-108 | ⬜ | Task API route handlers | M1 Board | M | T-103, T-107 |
 | T-109 | ⬜ | Board UI | M1 Board | L | T-108 |
 | T-110 | ⬜ | Task detail page | M1 Board | M | T-108 |
@@ -304,10 +304,24 @@ Create the typed database access layer.
 
 Add GitHub sign-in through Supabase Auth.
 
-- [ ] Add `lib/supabase/server.ts` and `browser.ts` using `@supabase/ssr`.
-- [ ] Add a `middleware.ts` that refreshes the session and redirects unauthenticated users to `/login`.
-- [ ] Add a `/login` page with a "Sign in with GitHub" button, and an `/auth/callback` route handler.
-- [ ] Add a sign-out action in the header.
+- [x] Add `lib/supabase/server.ts` and `browser.ts` using `@supabase/ssr`.
+- [x] Add a `proxy.ts` that refreshes the session and redirects unauthenticated users to `/login`. (Next 16 deprecated the `middleware` convention and renamed it to `proxy`; same behaviour.)
+- [x] Add a `/login` page with a "Sign in with GitHub" button, and an `/auth/callback` route handler.
+- [x] Add a sign-out action in the header.
+
+> 🟡 Code complete and the routing verified: signed out, / and /tasks/PM-1 both
+> redirect to /login carrying ?next=, /login renders, the callback without a code
+> lands on the error page, and the dev log is clean.
+>
+> Not verifiable yet: an actual GitHub sign-in. That needs a GitHub OAuth app —
+> which is NOT the GitHub App from T-203 — so [auth.external.github] is committed
+> disabled in supabase/config.toml with the credentials read from env. Flip it on
+> once T-001 is finished, then confirm a settings row appears after first login.
+>
+> Two deviations. Next 16 renamed middleware to proxy, so the file is proxy.ts.
+> And .env.local moved to apps/web/: Next loads it from the app directory, not the
+> monorepo root, so the root copy was being read by nothing and the dev server
+> failed with a misleading "URL and Key are required" error.
 
 **Done when**: you can sign in and out locally, and a `settings` row exists for your user after the first login.
 

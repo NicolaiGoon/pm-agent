@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@pm/db": "workspace:*",
     "@pm/domain": "workspace:*",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
     "class-variance-authority": "^0.7.1",
     "cn": "0.3.0",
     "lucide-react": "^1.47.0",
@@ -31,6 +34,7 @@
     "eslint-config-next": "16.3.5",
     "shadcn": "^4.21.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
