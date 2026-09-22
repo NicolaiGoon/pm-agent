@@ -28,8 +28,8 @@ Last updated 2026-09-22.
 | T-103 | ✅ | State machine: transitions seed, `transition_task`, `create_task` | M1 Board | M | T-101 |
 | T-104 | ✅ | pgTAP tests for schema, RLS, state machine | M1 Board | M | T-102, T-103 |
 | T-105 | ✅ | `domain` package | M1 Board | S | T-002 |
-| T-106 | ⬜ | `db` package | M1 Board | S | T-101, T-105 |
-| T-107 | ⬜ | Auth: GitHub login | M1 Board | S | T-004, T-106 |
+| T-106 | ✅ | `db` package | M1 Board | S | T-101, T-105 |
+| T-107 | ✅ | Auth: sign-in (email/password, GitHub optional) | M1 Board | S | T-004, T-106 |
 | T-108 | ⬜ | Task API route handlers | M1 Board | M | T-103, T-107 |
 | T-109 | ⬜ | Board UI | M1 Board | L | T-108 |
 | T-110 | ⬜ | Task detail page | M1 Board | M | T-108 |
@@ -279,20 +279,53 @@ Create the shared, dependency-free domain types.
 
 Create the typed database access layer.
 
-- [ ] Generate `database.types.ts` with `supabase gen types typescript --local`.
-- [ ] Add typed helper functions: `transitionTask()`, `createTask()`, `getTaskByKey()`, `listBoard(projectId)`.
-- [ ] Add a service-role client factory for server-only use, and guard it against being imported by browser code.
+- [x] Generate `database.types.ts` with `supabase gen types typescript --local`.
+- [x] Add typed helper functions: `transitionTask()`, `createTask()`, `getTaskByKey()`, `listBoard(projectId)`.
+- [x] Add a service-role client factory for server-only use, and guard it against being imported by browser code.
+
+> ✅ Done. Generated types plus client factories and typed helpers for the reads
+> and RPCs M1 needs. Errors surface as DbError carrying the Postgres code, with the
+> deliberate codes named in PG_ERRORS so T-108 maps them to HTTP without matching
+> string literals at each call site.
+>
+> 8 integration tests run as a real signed-in user through PostgREST under RLS —
+> the only way to catch an RPC argument name drifting from the migration. They skip
+> themselves when the stack is down, so pnpm test still works without Docker, and
+> CI runs them for real in the database job.
+>
+> createServiceClient throws if it sees a browser global rather than failing later
+> on an undefined key, turning a silent privilege leak into an obvious crash.
+> Inference was verified both ways: the probe compiled, and typing a key as number
+> broke it.
 
 **Done when**: the web app can import `@pm/db` and call `listBoard` with full type inference.
 
-### T-107 Auth: GitHub login · S
+### T-107 Auth: sign-in · S
 
 Add GitHub sign-in through Supabase Auth.
 
-- [ ] Add `lib/supabase/server.ts` and `browser.ts` using `@supabase/ssr`.
-- [ ] Add a `middleware.ts` that refreshes the session and redirects unauthenticated users to `/login`.
-- [ ] Add a `/login` page with a "Sign in with GitHub" button, and an `/auth/callback` route handler.
-- [ ] Add a sign-out action in the header.
+- [x] Add `lib/supabase/server.ts` and `browser.ts` using `@supabase/ssr`.
+- [x] Add a `proxy.ts` that refreshes the session and redirects unauthenticated users to `/login`. (Next 16 deprecated the `middleware` convention and renamed it to `proxy`; same behaviour.)
+- [x] Add a `/login` page with email/password sign-in and sign-up, a "Sign in with GitHub" button behind a flag, and an `/auth/callback` route handler.
+- [x] Add a sign-out action in the header.
+
+> ✅ Done. Email and password is the default provider rather than GitHub OAuth:
+> the system is single-user, so the identity provider is a convenience, and this
+> removes a setup step before the board is usable. GitHub OAuth is fully
+> implemented and appears behind NEXT_PUBLIC_GITHUB_AUTH_ENABLED, so the button
+> is never shown in a state where clicking it would fail. HLD §Supabase features
+> updated to match.
+>
+> Verified in a real browser: create account → signed in → sign out → wrong
+> password rejected with a deliberately vague message → correct password → signed
+> in. The settings row is created by the T-102 trigger with the expected defaults
+> ($10/day, claude-sonnet-5, claude-opus-5). Signed out, / and /tasks/PM-1 both
+> redirect to /login carrying ?next=.
+>
+> Two deviations. Next 16 renamed middleware to proxy, so the file is proxy.ts.
+> And .env.local moved to apps/web/: Next loads it from the app directory, not the
+> monorepo root, so the root copy was read by nothing and the dev server failed
+> with a misleading "URL and Key are required" error.
 
 **Done when**: you can sign in and out locally, and a `settings` row exists for your user after the first login.
 

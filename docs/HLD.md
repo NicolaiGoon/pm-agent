@@ -137,7 +137,10 @@ Eight core tables cover v1; specs and runs are append-only so you always have hi
 
 **Supabase features used**
 
-- Auth: GitHub OAuth login for you; RLS policies restrict all rows to your user id.
+- Auth: Supabase email and password login for you, with GitHub OAuth available behind
+  a config flag; RLS policies restrict all rows to your user id. The system is
+  single-user, so the identity provider is a convenience rather than an
+  architectural choice — nothing downstream depends on which one issued the JWT.
 - Realtime: board and run-log live updates.
 - pgmq (Queues): durable job queue with visibility timeouts, so a crashed worker's job is retried.
 - Storage: run artifacts (full transcripts, test output, diffs) to keep large blobs out of Postgres.

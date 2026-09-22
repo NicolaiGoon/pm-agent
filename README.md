@@ -18,7 +18,7 @@ Design docs: [HLD](docs/HLD.md) · [LLD](docs/LLD.md) · task breakdown in [TASK
 
 ```bash
 pnpm install
-cp .env.example .env.local   # then fill in — see LLD §11
+cp apps/web/.env.example apps/web/.env.local   # then fill in — see LLD §11
 pnpm db:start                # first run pulls several GB of images
 pnpm dev                     # http://localhost:3000
 ```
